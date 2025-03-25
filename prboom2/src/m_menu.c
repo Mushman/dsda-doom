@@ -79,6 +79,7 @@
 #include "f_finale.h"
 #include "e6y.h"//e6y
 
+#include "dsda/args.h"
 #include "dsda/episode.h"
 #include "dsda/exhud.h"
 #include "dsda/features.h"
@@ -691,10 +692,13 @@ static void M_DrawSkillMenu(void)
 void M_NewGame(int choice)
 {
   if (demorecording) {  /* killough 5/26/98: exclude during demo recordings */
-    M_StartMessage("you can't start a new game\n"
-       "while recording a demo!\n\n"PRESSKEY,
-       NULL, false); // killough 5/26/98: not externalized
-    return;
+    if (!dsda_Flag(dsda_arg_alwaysrecord))
+    {
+      M_StartMessage("you can't start a new game\n"
+        "while recording a demo!\n\n"PRESSKEY,
+        NULL, false); // killough 5/26/98: not externalized
+      return;
+    }
   }
 
   // Chex Quest disabled the episode select screen, as did Doom II.

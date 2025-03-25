@@ -98,6 +98,11 @@ static arg_config_t arg_config[dsda_arg_count] = {
     "records a demo to the given file",
     arg_string,
   },
+  [dsda_arg_alwaysrecord] = {
+    "-alwaysrecord", NULL, NULL,
+    "record demos for all gameplay after launching (excluding from Load game)",
+    arg_string,
+  },
   [dsda_arg_recordfromto] = {
     "-recordfromto", NULL, NULL,
     "plays back the first file while writing to the second",

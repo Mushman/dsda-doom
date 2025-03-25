@@ -2722,9 +2722,14 @@ void G_ReloadDefaults(void)
     int l;
     l = dsda_CompatibilityLevel();
     if (l != UNSPECIFIED_COMPLEVEL)
+    {
       compatibility_level = l;
+    }
     else
-      dsda_MarkCompatibilityLevelUnspecified();
+    {
+      if (!dsda_Flag(dsda_arg_alwaysrecord))
+        dsda_MarkCompatibilityLevelUnspecified();
+    }
   }
   if (compatibility_level == -1)
     compatibility_level = best_compatibility;
@@ -2842,6 +2847,9 @@ void G_DoNewGame (void)
 
   G_InitNew (d_skill, realEpisode, realMap, true);
   gameaction = ga_nothing;
+
+  if (dsda_Flag(dsda_arg_alwaysrecord))
+    dsda_InitDemoRecording();
 
   dsda_WatchNewGame();
 

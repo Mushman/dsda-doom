@@ -2069,6 +2069,10 @@ static void D_DoomMainSetup(void)
     dsda_InitDemoRecording();
   }
 
+  arg = dsda_Arg(dsda_arg_alwaysrecord);
+  if (arg->found)
+    dsda_SetDemoBaseName(arg->value.v_string);
+
   dsda_ExecutePlaybackOptions();
 
   if (!userdemo)

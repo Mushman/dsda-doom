@@ -56,6 +56,7 @@
 #include "heretic/sb_bar.h"
 
 #include "dsda.h"
+#include "dsda/args.h"
 #include "dsda/configuration.h"
 #include "dsda/excmd.h"
 #include "dsda/exhud.h"
@@ -162,7 +163,7 @@ cheatseq_t cheat[] = {
   CHEAT("idbeholda",  "Auto-map",         cht_always, cheat_pw, pw_allmap, false),
   CHEAT("idbeholdl",  "Lite-Amp Goggles", cht_always, cheat_pw, pw_infrared, false),
   CHEAT("idbehold",   "BEHOLD menu",      cht_always, cheat_behold, 0, false),
-  CHEAT("idclev",     "Level Warp",       not_demo | not_menu, cheat_clev, -2, false),
+  CHEAT("idclev",     "Level Warp",       not_menu, cheat_clev, -2, false),
   CHEAT("idmypos",    NULL,               cht_always, cheat_mypos, 0, false),
   CHEAT("idrate",     "Frame rate",       cht_always, cheat_rate, 0, false),
   // phares
@@ -884,10 +885,14 @@ static dboolean M_ClassicDemo(void)
 
 static dboolean M_CheatAllowed(int when)
 {
-  return !dsda_StrictMode() &&
-         !(when & not_demo         && (demorecording || demoplayback)) &&
+  return !(when & not_demo         && (demorecording || demoplayback)) &&
          !(when & not_classic_demo && M_ClassicDemo()) &&
          !(when & not_menu         && menuactive);
+}
+
+static dboolean M_CheatAllowedStrict(char * cheat)
+{
+  return !dsda_StrictMode() || (demorecording && dsda_Flag(dsda_arg_alwaysrecord) && cheat == "idclev");
 }
 
 static void cht_InitCheats(void)
@@ -1057,7 +1062,9 @@ dboolean M_CheatEntered(const char* element, const char* value)
 
   for (cheat_i = cheat; cheat_i->cheat; cheat_i++)
   {
-    if (!strcmp(cheat_i->cheat, element) && M_CheatAllowed(cheat_i->when & ~not_menu))
+    if (!strcmp(cheat_i->cheat, element)
+      && M_CheatAllowed(cheat_i->when & ~not_menu)
+      && M_CheatAllowedStrict(cheat_i->cheat))
     {
       if (cheat_i->arg >= 0)
         cheat_i->func(cheat_i->arg);
